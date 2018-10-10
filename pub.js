@@ -1,22 +1,42 @@
-let redis = require("redis");
-let sub = redis.createClient()
-let pub = redis.createClient();
+'use strict';
+
+let redis = require('redis');
+let client1 = redis.createClient();
 let msg_count = 0;
+let client2 = redis.createClient();
 
-sub.on("subscribe",function(channel,message){
-    pub.publish("a nice channel ","I an sending a message. ");
-    pub.publish("a nice channel ","I am sending a second mesage");
-    pub.publish("a nice channel ","I am sending a third mesage");
-});
-
-sub.on("message", function(channel,message){
-    console.log("sub channel " + channel +":"+message);
-    msg_count += 1;
-    if(msg_count===3){
-        sub.unsubscribe();
-        sub.quit();
-        pub.quit();
+// Most clients probably don't do much on 'subscribe'. This example uses it to coordinate things within one program.
+client1.on('subscribe', function (channel, count) {
+    console.log('client1 subscribed to ' + channel + ', ' + count + ' total subscriptions');
+    if (count === 2) {
+        client2.publish('a nice channel', 'I am sending a message.');
+        client2.publish('another one', 'I am sending a second message.');
+        client2.publish('a nice channel', 'I am sending my last message.');
     }
 });
 
-sub.subscribe("a nice channel");
+client1.on('unsubscribe', function (channel, count) {
+    console.log('client1 unsubscribed from ' + channel + ', ' + count + ' total subscriptions');
+    if (count === 0) {
+        client2.end();
+        client1.end();
+    }
+});
+
+client1.on('message', function (channel, message) {
+    console.log('client1 channel ' + channel + ': ' + message);
+    msg_count += 1;
+    if (msg_count === 3) {
+        client1.unsubscribe();
+    }
+});
+
+client1.on('ready', function () {
+    // if you need auth, do it here
+    client1.incr('did a thing');
+    client1.subscribe('a nice channel', 'another one');
+});
+
+client2.on('ready', function () {
+    // if you need auth, do it here
+});
