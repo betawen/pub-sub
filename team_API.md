@@ -93,7 +93,7 @@
 /team/join/:userid
 ```
 
-#### 查询参数说明
+**查询参数说明**
 
 | 参数    | 说明   |
 | ------- | ------ |
@@ -130,16 +130,68 @@
 **样例**
 
 ```json
-
+"team":{
+    "user_name":"test_user7",
+    "team_name":"test_name",
+    "team_rank":200,
+    "team_number":45
+    "team_member":[
+    {
+        "user_name":"test_user8",
+        "level":14
+	},
+    {
+		"user_name":"test_user9",
+        "level":13
+    },
+    ]
+}
+"team_boxes":[
+    {
+        "user_name":"test_user8",
+        "help_time":4
+    },
+    {
+        "user_name":"test_user9",
+        "help_time":3
+    }
+]
 ```
-
-
 
 **字段说明**
 
-
-
 ## 退出队伍
+
+#### HttpMethod
+
+```http
+[POST]
+```
+
+#### Path
+
+```http
+/team/leaveteam/:user_id
+```
+
+**参数说明**
+
+|参数|说明|
+|-------|------|
+|user_id|用户id|
+
+#### PostBody
+
+**样例**
+
+```json
+{
+    "user_name":"test_user7",
+    "team_name":"test_name4
+}
+```
+
+**字段说明**
 
 ## 队伍排行榜
 
@@ -156,37 +208,3 @@
 ## 更新自己宝箱的状态
 
 ## 成功开启后领奖
-
-## 判断是否满足解锁team功能的条件
-
-*前端判断？*
-
-#### Http Method
-
-```http
- [POST]
-```
-
-#### Path
-
-```http
- /team/checkuserlevel/
-```
-
-#### PostBody
-
-**样例**
-
-```json
-{
-    "user_name"："test_user",
-    "level":15
-}
-```
-
-**参数说明**
-
-| 参数      | 数据类型 | 说明                 |
-| --------- | -------- | -------------------- |
-| user_name | string   | 用户姓名,唯一        |
-| level     | Integer  | 用于判断等级是否满足 |
